@@ -1,9 +1,8 @@
 use crate::db;
 use crate::error_handler::CustomError;
 use diesel::prelude::*;
-use diesel::query_dsl::methods::OffsetDsl;
 use serde::{Deserialize, Serialize};
-use crate::phones::phone_report;
+use crate::schema::phone_report;
 
 #[derive(Serialize, Deserialize, AsChangeset, Insertable)]
 #[table_name = "phone_report"]
@@ -28,69 +27,69 @@ pub struct PhoneReportImpl {
     pub date_modified: String,
 }
 
-
-#[derive(Serialize, Deserialize, AsChangeset, Insertable)]
-#[table_name = "phone_search"]
-pub struct PhoneSearch {
-    pub phone_number: String,
-    pub count_search: i32,
-    pub date_created: String,
-    pub date_modified: String,
-}
-
-#[derive(Serialize, Deserialize, Queryable, Insertable)]
-#[table_name = "phone_search"]
-pub struct PhoneSearchImpl {
-    pub id: i32,
-    pub phone_number: String,
-    pub count_search: i32,
-    pub date_created: String,
-    pub date_modified: String,
-}
-
-#[derive(Serialize, Deserialize, AsChangeset, Insertable)]
-#[table_name = "phone_comment"]
-pub struct PhoneComment {
-    pub phone_id: i32,
-    pub name_user: String,
-    pub body_comment: String,
-    pub date_created: String,
-    pub date_modified: String,
-}
-
-#[derive(Serialize, Deserialize, Queryable, Insertable)]
-#[table_name = "phone_comment"]
-pub struct PhoneCommentImpl {
-    pub id: i32,
-    pub phone_id: i32,
-    pub name_user: String,
-    pub body_comment: String,
-    pub date_created: String,
-    pub date_modified: String,
-}
-
+//
+// #[derive(Serialize, Deserialize, AsChangeset, Insertable)]
+// #[table_name = "phone_search"]
+// pub struct PhoneSearch {
+//     pub phone_number: String,
+//     pub count_search: i32,
+//     pub date_created: String,
+//     pub date_modified: String,
+// }
+//
+// #[derive(Serialize, Deserialize, Queryable, Insertable)]
+// #[table_name = "phone_search"]
+// pub struct PhoneSearchImpl {
+//     pub id: i32,
+//     pub phone_number: String,
+//     pub count_search: i32,
+//     pub date_created: String,
+//     pub date_modified: String,
+// }
+//
+// #[derive(Serialize, Deserialize, AsChangeset, Insertable)]
+// #[table_name = "phone_comment"]
+// pub struct PhoneComment {
+//     pub phone_id: i32,
+//     pub name_user: String,
+//     pub body_comment: String,
+//     pub date_created: String,
+//     pub date_modified: String,
+// }
+//
+// #[derive(Serialize, Deserialize, Queryable, Insertable)]
+// #[table_name = "phone_comment"]
+// pub struct PhoneCommentImpl {
+//     pub id: i32,
+//     pub phone_id: i32,
+//     pub name_user: String,
+//     pub body_comment: String,
+//     pub date_created: String,
+//     pub date_modified: String,
+// }
+//
 
 impl PhoneReportImpl {
     pub fn find_all() -> Result<Vec<Self>, CustomError> {
         let conn = db::connection()?;
-        let phone_report = phone_report::table.load::<PhoneReportImpl>(&conn)?;
-        Ok(phone_report)
+        let phone = phone_report::table.load::<PhoneReportImpl>(&conn)?;
+        Ok(phone)
     }
 
     pub fn find(id: i32) -> Result<Self, CustomError> {
         let conn = db::connection()?;
-        let phone_report = phone_report::table.filter(phone_report::id.eq(id)).first(&conn)?;
-        Ok(phone_report)
+        let phone = phone_report::table.filter(phone_report::id.eq(id)).first(&conn)?;
+        Ok(phone)
     }
 
 
     pub fn create(phone: PhoneReport) -> Result<Self, CustomError> {
         let conn = db::connection()?;
-        let phone_report = PhoneReport::from(phone);
-        let phone_report = diesel::insert_into(phone_report::table)
-            .values(phone_report)
+        let phone = PhoneReport::from(phone);
+        let phone = diesel::insert_into(phone_report::table)
+            .values(phone)
             .get_result(&conn)?;
-        Ok(phone_report)
+        Ok(phone)
     }
 
     pub fn update(id: i32, phone_report: PhoneReport) -> Result<Self, CustomError> {
